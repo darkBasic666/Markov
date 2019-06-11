@@ -19,7 +19,7 @@ public class MarkovController {
     }
 
     @GetMapping("/took")
-    public String took(@RequestParam(required = false, defaultValue = "10") Integer length,@RequestParam String name ) {
+    public String took(@RequestParam(required = false, defaultValue = "20") Integer length,@RequestParam String name ) {
         return bootService.took(length, name);
     }
 }

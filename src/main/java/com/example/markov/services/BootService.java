@@ -10,13 +10,18 @@ import java.util.*;
 @Slf4j
 @Service
 public class BootService {
-    Map<String, List<String>> boots = new HashMap<>();
+
+    private static Random r = new Random();
+
+    Map<String, Map<String, List<String>>> boots = new HashMap<>();
+
+    private Integer keySize = 3;
 
     @Autowired
     FeedService feedService;
 
     public void addBoot(String name){
-        boots.put(name, new ArrayList<String>());
+        boots.put(name, new HashMap<>());
     }
 
     public void feed(Feed feed){
@@ -26,11 +31,33 @@ public class BootService {
 
 
     public String took(Integer length, String name) {
-        String response = "";
-        for (int i = 0; i < length; i++) {
-            Integer random = new Random().nextInt(boots.get(name).size());
-            response += " " + boots.get(name).get(random);
+        Map<String, List<String>> dict = boots.get(name);
+        int n = 0;
+        int rn = r.nextInt(dict.size());
+        String prefix = (String) dict.keySet().toArray()[rn];
+        List<String> output = new ArrayList<>(Arrays.asList(prefix.split(" ")));
+
+        while (true) {
+
+            List<String> suffix = dict.get(prefix);
+            if (suffix != null){
+                if (suffix.size() == 1) {
+                    if (Objects.equals(suffix.get(0), "")) return output.stream().reduce("", (a, b) -> a + " " + b);
+                    output.add(suffix.get(0));
+                } else {
+                    rn = r.nextInt(suffix.size());
+                    output.add(suffix.get(rn));
+                }
+
+            } else {
+                rn = r.nextInt(dict.size());
+                List<String> auxPrefix = (List<String>) dict.keySet().toArray()[rn];
+                output.addAll(auxPrefix);
+            }
+
+            if (output.size() >= length) return output.stream().limit(length).reduce("", (a, b) -> a + " " + b);
+            n++;
+            prefix = output.stream().skip(n).limit(keySize).reduce("", (a, b) -> a + " " + b).trim();
         }
-        return response;
     }
 }
