@@ -3,6 +3,7 @@ package com.example.markov.services;
 import com.example.markov.models.Feed;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -13,7 +14,7 @@ public class BootService {
 
     private static Random r = new Random();
 
-    Map<String, Map<String, List<String>>> boots = new HashMap<>();
+    Map<String, Map<String, List<String>>> bots = new HashMap<>();
 
     private Integer keySize = 3;
 
@@ -21,17 +22,18 @@ public class BootService {
     FeedService feedService;
 
     public void addBoot(String name){
-        boots.put(name, new HashMap<>());
+        bots.put(name, new HashMap<>());
     }
 
     public void feed(Feed feed){
-        if (boots.get(feed.getName()) == null) addBoot(feed.getName());
-        feedService.feed(boots.get(feed.getName()), feed.getText());
+        if (bots.get(feed.getName()) == null) addBoot(feed.getName());
+        feedService.feed(bots.get(feed.getName()), feed.getText());
     }
 
 
     public String took(Integer length, String name) {
-        Map<String, List<String>> dict = boots.get(name);
+        Map<String, List<String>> dict = bots.get(name);
+        if (dict == null) throw new wolox.chargebee.bravo.exceptions.BotNotFound("bot with name " + name + " is not found.");
         int n = 0;
         int rn = r.nextInt(dict.size());
         String prefix = (String) dict.keySet().toArray()[rn];
@@ -59,5 +61,10 @@ public class BootService {
             n++;
             prefix = output.stream().skip(n).limit(keySize).reduce("", (a, b) -> a + " " + b).trim();
         }
+    }
+    
+    @Scheduled(cron = "0 0 1 ? * * *")
+    public void clean () {
+        bots = new HashMap<>();
     }
 }
