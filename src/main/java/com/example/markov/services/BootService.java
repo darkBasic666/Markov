@@ -63,8 +63,9 @@ public class BootService {
         }
     }
     
-    @Scheduled(cron = "0 0 1 ? * * *")
+    @Scheduled(cron = "* */90 * * * *")
     public void clean () {
+        log.info("Cleaning bots");
         bots = new HashMap<>();
     }
 }
