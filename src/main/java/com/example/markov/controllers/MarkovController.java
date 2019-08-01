@@ -1,5 +1,6 @@
 package com.example.markov.controllers;
 
+import com.example.markov.models.BootResponse;
 import com.example.markov.models.Feed;
 import com.example.markov.services.BootService;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +20,7 @@ public class MarkovController {
     }
 
     @GetMapping("/took")
-    public String took(@RequestParam(required = false, defaultValue = "20") Integer length,@RequestParam String name ) {
+    public BootResponse took(@RequestParam(required = false, defaultValue = "20") Integer length, @RequestParam String name ) {
         return bootService.took(length, name);
     }
 }
