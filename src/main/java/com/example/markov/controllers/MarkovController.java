@@ -20,7 +20,7 @@ public class MarkovController {
     }
 
     @GetMapping("/took")
-    public BootResponse took(@RequestParam(required = false, defaultValue = "20") Integer length, @RequestParam String name ) {
+    public BootResponse took(@RequestParam(required = false, defaultValue = "20") Integer length, @RequestParam String name ) throws InterruptedException {
         return bootService.took(length, name);
     }
 }

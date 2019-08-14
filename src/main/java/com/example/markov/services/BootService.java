@@ -33,9 +33,10 @@ public class BootService {
     }
 
 
-    public BootResponse took(Integer length, String name) {
+    public BootResponse took(Integer length, String name) throws InterruptedException {
         Map<String, List<String>> dict = bots.get(name);
         if (dict == null) throw new wolox.chargebee.bravo.exceptions.BotNotFound("bot with name " + name + " is not found.");
+        think();
         int n = 0;
         int rn = r.nextInt(dict.size());
         String prefix = (String) dict.keySet().toArray()[rn];
@@ -72,7 +73,13 @@ public class BootService {
             prefix = output.stream().skip(n).limit(keySize).reduce("", (a, b) -> a + " " + b).trim();
         }
     }
-    
+
+    private void think() throws InterruptedException {
+        Integer thinkingTime = 1000 + r.nextInt(1000);
+        log.info("The bot thinking " + thinkingTime + " milliseconds");
+        Thread.sleep(thinkingTime);
+    }
+
     @Scheduled(cron = "* */90 * * * *")
     public void clean () {
         if (!bots.isEmpty()) {
