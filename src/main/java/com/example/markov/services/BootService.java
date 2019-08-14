@@ -8,6 +8,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Service
@@ -15,7 +16,7 @@ public class BootService {
 
     private static Random r = new Random();
 
-    Map<String, Map<String, List<String>>> bots = new HashMap<>();
+    Map<String, Map<String, List<String>>> bots =  new ConcurrentHashMap<>();
 
     private Integer keySize = 3;
 
@@ -23,7 +24,7 @@ public class BootService {
     FeedService feedService;
 
     public void addBoot(String name){
-        bots.put(name, new HashMap<>());
+        bots.put(name, new ConcurrentHashMap<>());
     }
 
     public void feed(Feed feed){
@@ -58,7 +59,8 @@ public class BootService {
 
             } else {
                 rn = r.nextInt(dict.size());
-                List<String> auxPrefix = (List<String>) dict.keySet().toArray()[rn];
+                List<String> auxPrefix = new ArrayList<>();
+                auxPrefix.add((String) dict.keySet().toArray()[rn]);
                 output.addAll(auxPrefix);
             }
 
